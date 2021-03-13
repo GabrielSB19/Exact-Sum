@@ -13,32 +13,31 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		
-		String amount;
+		String amount = br.readLine();
 		do {
-			amount = br.readLine();
-			int amountInt = Integer.parseInt(amount);
-			String [] pBooks = new String[amountInt];
-			String pBooksLine = br.readLine();
-			pBooks = pBooksLine.split("\\ ");
-			//System.out.println(Arrays.toString(pBooks));
-			int [] pBooksInt = toInt(pBooks);
-			//System.out.println(Arrays.toString(pBooksInt));
-			String moneyLine = br.readLine();
-			int money = Integer.parseInt(moneyLine);
 			
-			Arrays.sort(pBooksInt);
-			bw.write(bestOption (pBooksInt, money));
-			
+			if(!amount.equals("")) {
+				int amountInt = Integer.parseInt(amount);
+				String pBooksLine = br.readLine();
+				String [] pBooks = pBooksLine.split("\\ ");
+				int [] pBooksInt = toInt(pBooks, amountInt);
+				String moneyLine = br.readLine();
+				int money = Integer.parseInt(moneyLine);
+				
+				Arrays.sort(pBooksInt);
+				bw.write(bestOption (pBooksInt, money));
+			}
 			amount = br.readLine();
+
 		} while(amount != null);
 		
 		br.close();
 		bw.close();
 	}
 	
-	public static int [] toInt(String[] pBooks) {
-		int [] priceBook = new int [pBooks.length];
-		for(int i = 0; i<pBooks.length; i++) {
+	public static int [] toInt(String[] pBooks, int amountInt) {
+		int [] priceBook = new int [amountInt];
+		for(int i = 0; i<amountInt; i++) {
 			priceBook[i] = Integer.parseInt(pBooks[i]);
 		}
  		return priceBook;
@@ -51,23 +50,23 @@ public class Main {
 		int most = money;
 		int pos = -1;
 		int i = 0;
-		int j = pBooksInt.length;
+		int j = pBooksInt.length-1;
 		for(int x = 0; x<pBooksInt.length; x++) {
 			while (i<=j && pos<0) {
 				int m = (i+j)/2;
-				if(pBooksInt[m]+pBooksInt[x] == money) {
+				if(pBooksInt[m]+pBooksInt[x] == money && m != x) {
 					test.add(pBooksInt[m]);
 					test.add(pBooksInt[x]);
 					pos = m;
-				} else if (pBooksInt[m]+pBooksInt[x] < money) {
-					i = m+1;
-				} else {
+				} else if (pBooksInt[m]+pBooksInt[x] >= money) {
 					j = m-1;
+				} else {
+					i = m+1;
 				}
 			}
 			pos = -1;
 			i = 0;
-			j = pBooksInt.length;
+			j = pBooksInt.length-1;
 		}
 		
 		for(int k = 0; k<test.size(); k = k+2) {
@@ -77,7 +76,9 @@ public class Main {
 				minPrices[0] = test.get(k+1);
 			}
 		}
-		msg = "Peter should buy books whose prices are "+minPrices[0]+" y "+minPrices[1]+"\n";
+
+		
+		msg = "Peter should buy books whose prices are "+minPrices[0]+" and "+minPrices[1]+".\n\n";
 		return msg;
 	}
 }
